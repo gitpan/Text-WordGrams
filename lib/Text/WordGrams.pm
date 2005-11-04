@@ -13,19 +13,21 @@ Text::WordGrams - Calculates statistics on word ngrams.
 
 =head1 VERSION
 
-Version 0.01
+Version 0.02
 
 =cut
 
-our $VERSION = '0.01';
+our $VERSION = '0.02';
 our @ISA = "Exporter";
-our @EXPORT = "word_grams";
+our @EXPORT = ("word_grams", "word_grams_from_files");
 
 =head1 SYNOPSIS
 
     use Text::WordGrams;
 
     my $data = word_grams( $text );
+
+    my $data = word_grams_from_file( $file1, $file2 );
 
 =head1 FUNCTIONS
 
@@ -82,6 +84,36 @@ sub _get {
   }
 }
 
+=head2 word_grams_from_files
+
+Supports the same options of C<word_grams> function, but receives a
+list of file names instead of a string.
+
+=cut
+
+sub word_grams_from_files {
+  my $conf = {};
+  $conf = shift if (ref($_[0]) eq "HASH");
+  my $data;
+
+  for my $file (@_) {
+    next unless -f $file;
+
+    local $/ = "\n\n";
+
+    open F, $file or die "Can't open file: $file\n";
+    while(<F>) {
+      my $o = word_grams($conf, $_);
+      for my $w (keys %$o) {
+	$data->{$w}+=$o->{$w}
+      }
+    }
+    close F;
+  }
+
+  return $data;
+}
+
 =head1 AUTHOR
 
 Alberto Simões, C<< <ambs@cpan.org> >>
@@ -90,16 +122,16 @@ Alberto Simões, C<< <ambs@cpan.org> >>
 
 Please report any bugs or feature requests to
 C<bug-text-wordgrams@rt.cpan.org>, or through the web interface at
-L<http://rt.cpan.org/NoAuth/ReportBug.html?Queue=Text-WordGrams>.
-I will be notified, and then you'll automatically be notified of progress on
-your bug as I make changes.
+L<http://rt.cpan.org/NoAuth/ReportBug.html?Queue=Text-WordGrams>.  I
+will be notified, and then you'll automatically be notified of
+progress on your bug as I make changes.
 
 =head1 COPYRIGHT & LICENSE
 
 Copyright 2005 Alberto Simões, all rights reserved.
 
-This program is free software; you can redistribute it and/or modify it
-under the same terms as Perl itself.
+This program is free software; you can redistribute it and/or modify
+it under the same terms as Perl itself.
 
 =cut
 
