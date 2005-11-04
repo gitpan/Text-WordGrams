@@ -1,0 +1,8 @@
+Revision history for Text-WordGrams
+
+0.01    2005, Nov 04 - 20:30
+        First version, released on an unsuspecting world including:
+	- a simple word_grams function to proccess a string
+
+	Release soon! Release often!
+
