@@ -11,3 +11,4 @@ t/01-pair.t
 t/02-file.t
 t/02-input
 t/03-big.t
+t/04-notokenize.t

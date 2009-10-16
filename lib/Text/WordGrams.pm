@@ -13,11 +13,11 @@ Text::WordGrams - Calculates statistics on word ngrams.
 
 =head1 VERSION
 
-Version 0.03
+Version 0.04
 
 =cut
 
-our $VERSION = '0.03';
+our $VERSION = '0.04';
 our @ISA = "Exporter";
 our @EXPORT = ("word_grams", "word_grams_from_files");
 
@@ -52,6 +52,12 @@ should be greater or equal to two. Also, keep in mind that the bigger
 size you ask for, the larger the hash will become. Future releases
 might include a DB File version for less memory consuption.
 
+=item tokenize
+
+This option is activated by default. Give a zero value if your
+document is already tokenized. In this case your text will be slitted
+by space characters.
+
 =back
 
 =cut
@@ -63,7 +69,16 @@ sub word_grams {
 
   my $text = shift;
   $text = lc($text) if $conf->{ignore_case};
-  my @atoms = atomiza($text);
+
+  my @atoms;
+  if (!exists($conf->{tokenize}) || $conf->{tokenize} == 1) {
+      @atoms = atomiza($text);
+  }
+  else {
+      $text =~ s/\n/ /g;
+      @atoms = split /\s+/, $text;
+  }
+
   my $data;
 
   my $previous = shift @atoms;

@@ -1,5 +1,8 @@
 Revision history for Text-WordGrams
 
+0.04    2009, Oct 16 - 19:58
+        - added option not to tokenize the document
+
 0.03	2009, Oct 16 - 19:07
 	- fixed typo on perldoc
 
