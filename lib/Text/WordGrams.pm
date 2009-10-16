@@ -13,11 +13,11 @@ Text::WordGrams - Calculates statistics on word ngrams.
 
 =head1 VERSION
 
-Version 0.02
+Version 0.03
 
 =cut
 
-our $VERSION = '0.02';
+our $VERSION = '0.03';
 our @ISA = "Exporter";
 our @EXPORT = ("word_grams", "word_grams_from_files");
 
@@ -27,7 +27,7 @@ our @EXPORT = ("word_grams", "word_grams_from_files");
 
     my $data = word_grams( $text );
 
-    my $data = word_grams_from_file( $file1, $file2 );
+    my $data = word_grams_from_files( $file1, $file2 );
 
 =head1 FUNCTIONS
 
@@ -120,6 +120,10 @@ Alberto Simões, C<< <ambs@cpan.org> >>
 
 =head1 BUGS
 
+Current method is very, very slow. if you find any faster method,
+please let me know. I think the bottle neck is in the tokenisation
+part.
+
 Please report any bugs or feature requests to
 C<bug-text-wordgrams@rt.cpan.org>, or through the web interface at
 L<http://rt.cpan.org/NoAuth/ReportBug.html?Queue=Text-WordGrams>.  I
@@ -128,7 +132,7 @@ progress on your bug as I make changes.
 
 =head1 COPYRIGHT & LICENSE
 
-Copyright 2005 Alberto Simões, all rights reserved.
+Copyright 2005-2009 Alberto Simões, all rights reserved.
 
 This program is free software; you can redistribute it and/or modify
 it under the same terms as Perl itself.

@@ -1,5 +1,8 @@
 Revision history for Text-WordGrams
 
+0.03	2009, Oct 16 - 19:07
+	- fixed typo on perldoc
+
 0.02    2005, Nov 04 - 23:43
 	- support for processing a list of files instead of a string.
 
