@@ -2,6 +2,9 @@ package Text::WordGrams;
 
 use warnings;
 use strict;
+use DB_File;
+use File::Temp;
+use Fcntl;
 
 require Exporter;
 
@@ -13,11 +16,11 @@ Text::WordGrams - Calculates statistics on word ngrams.
 
 =head1 VERSION
 
-Version 0.04
+Version 0.05
 
 =cut
 
-our $VERSION = '0.04';
+our $VERSION = '0.05';
 our @ISA = "Exporter";
 our @EXPORT = ("word_grams", "word_grams_from_files");
 
@@ -49,8 +52,7 @@ Set this option to ignore text case;
 
 Set this option to the n-gram size you want. Notice that the value
 should be greater or equal to two. Also, keep in mind that the bigger
-size you ask for, the larger the hash will become. Future releases
-might include a DB File version for less memory consuption.
+size you ask for, the larger the hash will become.
 
 =item tokenize
 
@@ -63,40 +65,48 @@ by space characters.
 =cut
 
 sub word_grams {
-  my $conf = {};
-  $conf = shift if (ref($_[0]) eq "HASH");
-  $conf->{size} = 2 unless $conf->{size} && $conf->{size} > 1;
+    my $conf = {};
+    $conf = shift if (ref($_[0]) eq "HASH");
+    $conf->{size} = 2 unless $conf->{size} && $conf->{size} >= 1;
 
-  my $text = shift;
-  $text = lc($text) if $conf->{ignore_case};
+    my $text = shift;
+    $text = lc($text) if $conf->{ignore_case};
 
-  my @atoms;
-  if (!exists($conf->{tokenize}) || $conf->{tokenize} == 1) {
-      @atoms = atomiza($text);
-  }
-  else {
-      $text =~ s/\n/ /g;
-      @atoms = split /\s+/, $text;
-  }
+    my @atoms;
+    if (!exists($conf->{tokenize}) || $conf->{tokenize} == 1) {
+        @atoms = atomiza($text);
+    }
+    else {
+        $text =~ s/\n/ /g;
+        @atoms = split /\s+/, $text;
+    }
 
-  my $data;
+    my %data;
+    my $fh = File::Temp->new();
+    my $fname = $fh->filename;
+    $DB_HASH->{cachesize} = 10000;
+    tie %data, 'DB_File', $fname, 0666, O_CREAT, $DB_HASH;
 
-  my $previous = shift @atoms;
-  my $next;
-  while ($next = _get($conf->{size}-1, \@atoms)) {
-    $data->{"$previous $next"}++;
-    $previous = shift @atoms;
-  }
-  return $data
+    my $previous;
+    my $next;
+    while ($previous = shift @atoms) {
+        $next = _get($conf->{size}-1, \@atoms);
+        if (length($next)) {
+            $data{"$previous $next"}++;
+        } else {
+            $data{$previous}++;
+        }
+    }
+    return \%data
 }
 
 sub _get {
-  my ($n, $atoms) = @_;
-  if ($n <= $#$atoms + 1) {
-    return join(" ", @{$atoms}[0..$n-1])
-  } else {
-    return undef
-  }
+    my ($n, $atoms) = @_;
+    if ($n && $n <= $#$atoms + 1) {
+        return join(" ", @{$atoms}[0..$n-1])
+    } else {
+        return ""
+    }
 }
 
 =head2 word_grams_from_files
@@ -107,26 +117,26 @@ list of file names instead of a string.
 =cut
 
 sub word_grams_from_files {
-  my $conf = {};
-  $conf = shift if (ref($_[0]) eq "HASH");
-  my $data;
+    my $conf = {};
+    $conf = shift if (ref($_[0]) eq "HASH");
+    my $data;
 
-  for my $file (@_) {
-    next unless -f $file;
+    for my $file (@_) {
+        next unless -f $file;
 
-    local $/ = "\n\n";
+        local $/ = "\n\n";
 
-    open F, $file or die "Can't open file: $file\n";
-    while(<F>) {
-      my $o = word_grams($conf, $_);
-      for my $w (keys %$o) {
-	$data->{$w}+=$o->{$w}
-      }
+        open F, $file or die "Can't open file: $file\n";
+        while(<F>) {
+            my $o = word_grams($conf, $_);
+            for my $w (keys %$o) {
+                $data->{$w}+=$o->{$w}
+            }
+        }
+        close F;
     }
-    close F;
-  }
 
-  return $data;
+    return $data;
 }
 
 =head1 AUTHOR

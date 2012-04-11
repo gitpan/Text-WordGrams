@@ -9,8 +9,10 @@ WriteMakefile(
     ABSTRACT_FROM       => 'lib/Text/WordGrams.pm',
     PL_FILES            => {},
     PREREQ_PM => {
-        'Lingua::PT::PLNbase' => '0.02',
-        'Test::More' => 0,
+                  'File::Temp' => '0',
+                  'DB_File' => '0',
+                  'Lingua::PT::PLNbase' => '0.02',
+                  'Test::More' => 0,
     },
     dist                => { COMPRESS => 'gzip -9f', SUFFIX => 'gz', },
     clean               => { FILES => 'Text-WordGrams-*' },
