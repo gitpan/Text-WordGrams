@@ -22,4 +22,4 @@ requires:
   File::Temp: 0
   Lingua::PT::PLNbase: 0.02
   Test::More: 0
-version: 0.05
+version: 0.06

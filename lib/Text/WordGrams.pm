@@ -6,9 +6,11 @@ use DB_File;
 use File::Temp;
 use Fcntl;
 
-require Exporter;
+use base 'Exporter';
 
 use Lingua::PT::PLNbase;
+
+=encoding UTF-8
 
 =head1 NAME
 
@@ -16,12 +18,11 @@ Text::WordGrams - Calculates statistics on word ngrams.
 
 =head1 VERSION
 
-Version 0.05
+Version 0.06
 
 =cut
 
-our $VERSION = '0.05';
-our @ISA = "Exporter";
+our $VERSION = '0.06';
 our @EXPORT = ("word_grams", "word_grams_from_files");
 
 =head1 SYNOPSIS
@@ -141,7 +142,7 @@ sub word_grams_from_files {
 
 =head1 AUTHOR
 
-Alberto Simıes, C<< <ambs@cpan.org> >>
+Alberto Sim√µes, C<< <ambs@cpan.org> >>
 
 =head1 BUGS
 
@@ -157,7 +158,7 @@ progress on your bug as I make changes.
 
 =head1 COPYRIGHT & LICENSE
 
-Copyright 2005-2009 Alberto Simıes, all rights reserved.
+Copyright 2005-2009 Alberto Sim√µes, all rights reserved.
 
 This program is free software; you can redistribute it and/or modify
 it under the same terms as Perl itself.
