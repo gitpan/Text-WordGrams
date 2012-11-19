@@ -18,11 +18,11 @@ Text::WordGrams - Calculates statistics on word ngrams.
 
 =head1 VERSION
 
-Version 0.06
+Version 0.07
 
 =cut
 
-our $VERSION = '0.06';
+our $VERSION = '0.07';
 our @EXPORT = ("word_grams", "word_grams_from_files");
 
 =head1 SYNOPSIS
@@ -128,6 +128,9 @@ sub word_grams_from_files {
         local $/ = "\n\n";
 
         open F, $file or die "Can't open file: $file\n";
+
+        binmode F, ":utf8" if exists($conf->{utf8}) && $conf->{utf8};
+
         while(<F>) {
             my $o = word_grams($conf, $_);
             for my $w (keys %$o) {
